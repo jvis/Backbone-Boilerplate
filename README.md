@@ -8,6 +8,9 @@ In contrast to some Backbone boilerplates available, the focus of this architect
 The entire application is configured using a configuration object. All routes and pages are specified using HTML5 markup.
   
   
+DEMO: http://jvis.github.com/Backbone-Boilerplate  
+
+  
 Includes useful features, such as:  
 - Hierarchical object model for all class types (models, collections, views)
 - Asynchronous template loading (including CSS)
