@@ -92,12 +92,12 @@ define([
                 },
                 
                 onSubmit: function (event) {
-					var $form = $(event.target);
-					if (this.model) {
+               		var $form = $(event.target);
+		    		if (this.model) {
 						$.each($form.serializeArray(), function (index, value) {
-							this.model.set(value.name, value.value);
+			    			this.model.set(value.name, value.value);
 						});
-					}
+	    			}
                 }
             }
         }
