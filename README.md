@@ -1,4 +1,4 @@
-Backbone-Simple-Boilerplate
+Backbone-Boilerplate
 ===========================  
   
   
@@ -12,15 +12,15 @@ DEMO: http://jvis.github.com/Backbone-Boilerplate
 
   
 Includes useful features, such as:  
-- Hierarchical object model for all class types (models, collections, views)
-- Asynchronous template loading (including CSS)
-- Asynchronous Module Definition (AMD)
-- localStorage support
-- Page transitions
-- ... and more ...
+* Hierarchical object model for all class types (models, collections, views)
+* Asynchronous template loading (including CSS)
+* Asynchronous Module Definition (AMD)
+* localStorage support
+* Page transitions
+* ... and more ...
   
   
-Dependencies:  
+### Dependencies:  
 Backbone.JS - http://documentcloud.github.com/backbone/  
 Lodash - https://github.com/bestiejs/lodash (or Underscore)    
 JQuery - http://jquery.com  
@@ -31,11 +31,36 @@ Twitter Bootstrap (http://twitter.github.com/bootstrap/) has been used for the U
   
   
 Note:
-- LoDash is a drop-in replacement for Underscore.JS (http://underscorejs.org/). Will work with either.  
-- Also supports Handlebars templates (http://handlebarsjs.com/).
+* LoDash is a drop-in replacement for Underscore.JS (http://underscorejs.org/). Will work with either.  
+* Also supports Handlebars templates (http://handlebarsjs.com/).
+ 
 
- 
- 
+Application structure:
+* /app
+  * app.js           = application class
+  * appConfig.js     = applicaton configuration
+  * config.js        = require.js configuration
+  * main.js          = application entry point and bootstrap
+  * router.js        = Backbone.Router object
+  * /includes
+      * collections.js    = collections
+      * models.js         = models
+      * views.js          = views
+* /css
+  * ... stylesheets ...
+* /ico
+  * ... favicon / etc ...
+* /img
+  * ... images ...
+* /js
+  * /libs
+      * ... libraries (eg. JQuery, Backbone, etc) ...
+  * /plugins
+      * ... plugins (eg. Backbone.LayoutManager) ... 
+* /templates
+  * page.html       = main layout template (includes section / route configuration)
+  * ... template files ...
+* index.html        = index file
    
    
 This is a work-in-progress. Let me know if you have any suggestions or issues.
