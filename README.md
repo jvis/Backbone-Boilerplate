@@ -7,8 +7,8 @@ Simple Backbone.JS boilerplate application, designed for rapid HTML5 application
 In contrast to some Backbone boilerplates available, the focus of this architecture is reusability and simplicity. 
 The entire application is configured using a configuration object. All routes and pages are specified using HTML5 markup.
   
-  
-DEMO: http://jvis.github.com/Backbone-Boilerplate  
+## Demo
+### http://jvis.github.com/Backbone-Boilerplate  
 
   
 Includes useful features, such as:  
@@ -30,12 +30,12 @@ Require.JS - http://requirejs.org
 Twitter Bootstrap (http://twitter.github.com/bootstrap/) has been used for the UI.  
   
   
-Note:
+#### Note:
 * LoDash is a drop-in replacement for Underscore.JS (http://underscorejs.org/). Will work with either.  
 * Also supports Handlebars templates (http://handlebarsjs.com/).
  
 
-Application structure:
+### Application structure:
 * /app
   * app.js           = application class
   * appConfig.js     = applicaton configuration
