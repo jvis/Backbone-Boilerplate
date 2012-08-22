@@ -1,0 +1,40 @@
+/*****************
+ * custom styles *
+ *****************/
+
+#page {
+    position: relative;
+}
+
+.page {
+    position: relative;
+    -webkit-transform: translate3d(0,0,0);
+}
+
+.stage-left {
+    left: -150%;
+}
+
+.stage-right {
+    left: 150%;
+}
+
+.stage-center {
+    top: 0;
+    left: 0;
+}
+
+.transition {
+    -moz-transition-duration: .375s;
+    -webkit-transition-duration: .375s;
+    -o-transition-duration: .375s;
+}
+
+/**
+ * menu
+*/
+
+.loading {
+    background: url("../img/loading.gif") no-repeat center center;
+    min-height: 16px;
+}
