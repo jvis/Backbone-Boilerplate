@@ -43,9 +43,9 @@ Application structure:
   * main.js          = application entry point and bootstrap
   * router.js        = Backbone.Router object
   * /includes
-    * collections.js    = collections
-    * models.js         = models
-    * views.js          = views
+      * collections.js    = collections
+      * models.js         = models
+      * views.js          = views
 * /css
   * ... stylesheets ...
 * /ico
@@ -54,9 +54,9 @@ Application structure:
   * ... images ...
 * /js
   * /libs
-    * ... libraries (eg. JQuery, Backbone, etc) ...
+      * ... libraries (eg. JQuery, Backbone, etc) ...
   * /plugins
-    * ... plugins (eg. Backbone.LayoutManager) ... 
+      * ... plugins (eg. Backbone.LayoutManager) ... 
 * /templates
   * page.html       = main layout template (includes section / route configuration)
   * ... template files ...
