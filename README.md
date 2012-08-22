@@ -37,11 +37,30 @@ Note:
 
 Application structure:
 * /app
-  * /app.js           application class
-  * /appConfig.js     applicaton configuration
-  * /config.js        require.js configuration
-  * /main.js          application entry point and bootstrap
-  * /router.js        Backbone.Router object
+  * app.js           = application class
+  * appConfig.js     = applicaton configuration
+  * config.js        = require.js configuration
+  * main.js          = application entry point and bootstrap
+  * router.js        = Backbone.Router object
+  * /includes
+    * collections.js    = collections
+    * models.js         = models
+    * views.js          = views
+* /css
+  * ... stylesheets ...
+* /ico
+  * ... favicon / etc ...
+* /img
+  * ... images ...
+* /js
+  * /libs
+    * ... libraries (eg. JQuery, Backbone, etc) ...
+  * /plugins
+    * ... plugins (eg. Backbone.LayoutManager) ... 
+* /templates
+  * page.html       = main layout template (includes section / route configuration)
+  * ... template files ...
+* index.html        = index file
    
    
 This is a work-in-progress. Let me know if you have any suggestions or issues.
