@@ -33,9 +33,11 @@ Twitter Bootstrap (http://twitter.github.com/bootstrap/) has been used for the U
 Note:
 - LoDash is a drop-in replacement for Underscore.JS (http://underscorejs.org/). Will work with either.  
 - Also supports Handlebars templates (http://handlebarsjs.com/).
+ 
 
- 
- 
+Application structure:
+- /app
+-     /app.js  / main application class
    
    
 This is a work-in-progress. Let me know if you have any suggestions or issues.
