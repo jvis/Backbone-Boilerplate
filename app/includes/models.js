@@ -21,9 +21,9 @@ define([
         
         // @see http://backbonejs.org/#Model-defaults
         defaults: {
-            "appetizer":  "caesar salad",
-            "entree":     "ravioli",
-            "dessert":    "cheesecake"
+            "boilerplate":  "Backbone",
+            "testModel":     true,
+            "url":    "http://jvis.github.com/Backbone-Boilerplate/"
         },
   
         fetch: false, // set fetch = false to disable fetching
