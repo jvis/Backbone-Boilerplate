@@ -37,7 +37,11 @@ Note:
 
 Application structure:
 * /app
-* * /app.js  -- main application class
+  * /app.js           application class
+  * /appConfig.js     applicaton configuration
+  * /config.js        require.js configuration
+  * /main.js          application entry point and bootstrap
+  * /router.js        Backbone.Router object
    
    
 This is a work-in-progress. Let me know if you have any suggestions or issues.
