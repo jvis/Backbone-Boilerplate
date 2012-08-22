@@ -99,6 +99,7 @@ define([
 			    			self.model.set(value.name, value.value);
 						});
 	    			}
+					return false;
                 }
             }
         }
