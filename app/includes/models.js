@@ -92,10 +92,11 @@ define([
                 },
                 
                 onSubmit: function (event) {
-               		var $form = $(event.target);
+               		var $form = $(event.target),
+						self = this;
 		    		if (this.model) {
 						$.each($form.serializeArray(), function (index, value) {
-			    			this.model.set(value.name, value.value);
+			    			self.model.set(value.name, value.value);
 						});
 	    			}
                 }
