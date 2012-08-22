@@ -385,7 +385,7 @@ define([
                     // if template doesn't already exist and isn't currently being loaded
                     if (! ((name in self.templates) || (name in self.deferreds))) { 
                         var ajax = {
-                            dataType: self.dataType
+                            dataType: self.settings.dataType
                         };
                         if (ajax.dataType == 'jsonp') {
                             ajax.jsonpCallback = self.jsonpCallback(name);
