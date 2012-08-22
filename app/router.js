@@ -14,19 +14,19 @@ define([
 
             // Keep track of the history of pages (we only store the page URL). Used to identify the direction
             // (left or right) of the sliding transition between pages.
-            this.pageHistory = [],
+            this.pageHistory = [];
 
-            this.currentPage = null,
+            this.currentPage = null;
             
             // cache jQuery selectors
-            this.$els = {},
+            this.$els = {};
             
             // cache views (keyed by view name)
-            this.views = {},
+            this.views = {};
             
-            this.currentView = null,
+            this.currentView = null;
             
-            layoutOpts = { 
+            var layoutOpts = { 
                 views: {},
                 template: app.layoutSettings.template || this.layoutName
             }
