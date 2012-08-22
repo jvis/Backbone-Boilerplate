@@ -82,7 +82,7 @@ define([
                 className: "example",
 
                 events: {
-                    "click .icon": "open"
+                    "click #model-show": "open"
                 },
                 
                 serialize: function () {
@@ -92,7 +92,7 @@ define([
                 },
                 
                 open: function () {
-                    alert('open');
+                    alert(this.model ? this.model.id : 'No model');
                 }
             }
         }
