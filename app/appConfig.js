@@ -28,9 +28,7 @@ define([
             name: 'page', // layout name
             template: {
                 template: 'page', // template name
-                css: [
-                    'style'
-                ] // required CSS files (without .css extension)
+                css: [] // required CSS files (without .css extension)
             },
             content: 'page-content' // content element ID
         },
