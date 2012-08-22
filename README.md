@@ -5,13 +5,23 @@ Backbone-Simple-Boilerplate
 Simple Backbone.JS boilerplate application, designed for rapid HTML5 application development.  
   
 In contrast to some Backbone boilerplates available, the focus of this architecture is reusability and simplicity. 
-The entire application is configured using a properties object. All routes and pages are specified using HTML5 markup.
-
-Uses:  
+The entire application is configured using a configuration object. All routes and pages are specified using HTML5 markup.
+  
+  
+Includes useful features, such as:  
+- Hierarchical object model for all class types (models, collections, views)
+- Asynchronous template loading (including CSS)
+- Asynchronous Module Definition (AMD)
+- localStorage support
+- Page transitions
+- ... and more ...
+  
+  
+Dependencies:  
 Backbone.JS - http://documentcloud.github.com/backbone/  
-Lodash - https://github.com/bestiejs/lodash  
-jQuery - http://jquery.com  
-ICanHaz.js - http://icanhazjs.com  
+Lodash - https://github.com/bestiejs/lodash (or Underscore)    
+JQuery - http://jquery.com  
+ICanHaz.js - http://icanhazjs.com (or Handlebars)    
 Require.JS - http://requirejs.org  
   
 Twitter Bootstrap (http://twitter.github.com/bootstrap/) has been used for the UI.  
