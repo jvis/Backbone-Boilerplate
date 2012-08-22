@@ -7,8 +7,7 @@ Simple Backbone.JS boilerplate application, designed for rapid HTML5 application
 In contrast to some Backbone boilerplates available, the focus of this architecture is reusability and simplicity. 
 The entire application is configured using a configuration object. All routes and pages are specified using HTML5 markup.
   
-## Demo
-### http://jvis.github.com/Backbone-Boilerplate  
+### Demo: http://jvis.github.com/Backbone-Boilerplate  
 
   
 Includes useful features, such as:  
