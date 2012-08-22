@@ -82,7 +82,7 @@ define([
                 className: "example",
 
                 events: {
-                    "click #model-show": "open"
+                    "submit .set": "onSubmit"
                 },
                 
                 serialize: function () {
@@ -91,8 +91,13 @@ define([
                     }
                 },
                 
-                open: function () {
-                    alert(this.model ? this.model.id : 'No model');
+                onSubmit: function (event) {
+					var $form = $(event.target);
+					if (this.model) {
+						$.each($form.serializeArray(), function (index, value) {
+							this.model.set(value.name, value.value);
+						});
+					}
                 }
             }
         }
