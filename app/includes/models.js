@@ -94,6 +94,9 @@ define([
                 onSubmit: function (event) {
                		var $form = $(event.target),
 						self = this;
+					if (app.utils.analytics && app.utils.analytics.trackEvent) { // if tracking
+						app.utils.analytics.trackEvent('Form', 'Submit', 'example'); // track event
+					}
 		    		if (this.model) {
 						$.each($form.serializeArray(), function (index, value) {
 			    			self.model.set(value.name, value.value);
