@@ -167,10 +167,10 @@ define([
 			// @see https://developers.google.com/analytics/devguides/collection/gajs/methods/gaJSApiBasicConfiguration#_gat.GA_Tracker_._trackPageview
 			trackPageview: function (pageUrl) {
 				if (pageUrl) {
-					this.initialize.push(['_trackPageview', pageUrl]);
+					this.initialize().push(['_trackPageview', pageUrl]);
 				}
 				else {
-					this.initialize.push(['_trackPageview']);
+					this.initialize().push(['_trackPageview']);
 				}
 				return this;
 			},
@@ -178,7 +178,7 @@ define([
 			// track event
 			// @see https://developers.google.com/analytics/devguides/collection/gajs/methods/gaJSApiEventTracking#_gat.GA_EventTracker_._trackEvent
 			trackEvent: function (category, action, label, value, noninteraction) {
-				this.initialize.push(['_trackEvent', category, action, label, value, noninteraction]);
+				this.initialize().push(['_trackEvent', category, action, label, value, noninteraction]);
 				return this;
 			},
 			
