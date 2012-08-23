@@ -15,7 +15,8 @@ Includes useful features, such as:
 * Asynchronous template loading (including CSS)
 * Asynchronous Module Definition (AMD)
 * localStorage support
-* Page transitions
+* Page transitions  
+* Google Analytics tracking  
 * ... and more ...
   
   
