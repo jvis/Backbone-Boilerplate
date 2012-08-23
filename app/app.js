@@ -59,7 +59,7 @@ define([
             },
 
             // Helper for using layouts.
-            useLayout: function(name, opts, render) {
+            useLayout: function (name, opts, render) {
                 // If already using this Layout, then don't re-inject into the DOM.
                 if (this.layout && this.layout.options.template === name) {
                     return this.layout;
@@ -140,6 +140,65 @@ define([
         /**
          * utilities
          */
+		 
+		// analytics handler
+		app.utils.analytics = {
+			// initialize google analytics tracking
+			initialize: function () {
+				window._gaq = window._gaq || [];
+				
+				if (!this.init && this.settings) {
+					// add GA init parameters, eg. '_setAccount'
+					$.each(this.settings, function (index, value) {
+						window._gaq.push([index, value]);
+					});
+					
+					var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+					ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+					var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+					
+					this.init = true;
+				}
+				
+				return window._gaq;
+			},
+			
+			// track pageview
+			// @see https://developers.google.com/analytics/devguides/collection/gajs/methods/gaJSApiBasicConfiguration#_gat.GA_Tracker_._trackPageview
+			trackPageview: function (pageUrl) {
+				if (pageUrl) {
+					this.initialize.push(['_trackPageview', pageUrl]);
+				}
+				else {
+					this.initialize.push(['_trackPageview']);
+				}
+				return this;
+			},
+			
+			// track event
+			// @see https://developers.google.com/analytics/devguides/collection/gajs/methods/gaJSApiEventTracking#_gat.GA_EventTracker_._trackEvent
+			trackEvent: function (category, action, label, value, noninteraction) {
+				this.initialize.push(['_trackEvent', category, action, label, value, noninteraction]);
+				return this;
+			},
+			
+			// bind event tracking to JQuery element
+			bindTracking: function($elem, event, category, value, attr, single) {
+				var self = this,
+					method = "on";
+				
+				// track only the first event trigger?
+				if (single) {
+					method = "one";
+				}
+				
+				$elem[method](event, function() {
+					self.trackEvent(category, event, (value ? value : (attr ? $elem.attr(attr) : null)));
+				});
+				
+				return this;
+			}
+		};
         
         // local storage handler
         app.utils.localStorage = {
@@ -296,7 +355,7 @@ define([
                 }
                 return this;
             }
-        }
+        };
         
         // asynchronous template loader
         app.utils.templateLoader = { 

@@ -37,7 +37,12 @@ define([
                 settings: {
                     path: 'templates/' // template directory (relative to index.html)
                 }
-            }
+            },
+			analytics: { // google analytics tracking
+				settings: { // Google Analytics settings, @see https://developers.google.com/analytics/devguides/collection/gajs/methods/
+					_setAccount: 'UA-17371882-2'
+				}
+			}
         },
         views: views, // includes/views.js
         models: models, // includes/models.js

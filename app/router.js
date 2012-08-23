@@ -8,7 +8,7 @@ define([
 
         initialize: function () {
             var self = this;
-
+	
             this.layoutName = app.layoutSettings ? app.layoutSettings.name : "page";
             this.contentId = app.layoutSettings ? app.layoutSettings.content : "page-content";
 
@@ -87,11 +87,14 @@ define([
                     });
                 }
             }).done(function () {
+				// initialize tracking
+				this.bind('all', this.trackPageview);
                 // Trigger the initial route and enable HTML5 History API support
                 Backbone.history.start({
                     pushState: false, 
                     root: app.root
                 });
+				
             })
 
             return this;
@@ -205,7 +208,14 @@ define([
 
         getTitle: function () {
             return this.currentPage ? this.currentPage.data('title') || app.name : app.name;
-        }
+        },
+		
+		trackPageview: function () {
+			if (app.utils.analytics && app.utils.analytics.trackPageview) {
+				app.utils.analytics.trackPageview(Backbone.history.getFragment());
+			}
+			return this;
+		}
     })
 
     return Router;
