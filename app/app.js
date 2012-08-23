@@ -169,7 +169,13 @@ define([
             // track pageview
             // @see https://developers.google.com/analytics/devguides/collection/gajs/methods/gaJSApiBasicConfiguration#_gat.GA_Tracker_._trackPageview
             trackPageview: function (pageUrl) {
-                if (pageUrl) {
+                if (typeof(pageUrl) === 'string') {
+                    if (pageUrl.length > 1 && pageUrl[pageUrl.length - 1] == "/") {
+                            pageUrl = pageUrl.substring(0, pageUrl.length - 1);
+                    }
+                    if (pageUrl[0] != "/") {
+                            pageUrl = "/" + pageUrl;
+                    }
                     this.initialize().push(['_trackPageview', pageUrl]);
                 }
                 else {

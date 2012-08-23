@@ -212,14 +212,7 @@ define([
 		
         trackPageview: function () {
             if (app.utils.analytics && app.utils.analytics.trackPageview) {
-				var pageUrl = Backbone.history.getFragment() || "/";
-				if (pageUrl.length > 1 && pageUrl[pageUrl.length - 1] == "/") {
-					pageUrl = pageUrl.substring(0, pageUrl.length - 1);
-				}
-				if (pageUrl[0] != "/") {
-					pageUrl = "/" + pageUrl;
-				}
-                app.utils.analytics.trackPageview(pageUrl);
+                app.utils.analytics.trackPageview(Backbone.history.getFragment() || "/");
             }
             return this;
         }
