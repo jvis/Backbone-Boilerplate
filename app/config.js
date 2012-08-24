@@ -14,7 +14,7 @@ require.config({
         jquery: "../js/libs/jquery.min",
         lodash: "../js/libs/lodash.min",
         backbone: "../js/libs/backbone.min",
-        bootstrap: "../js/libs/bootstrap",
+        bootstrap: "../js/libs/bootstrap.min",
         handlebars: "../js/libs/handlebars",
         icanhaz: "../js/libs/icanhaz"
     },
