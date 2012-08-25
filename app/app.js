@@ -605,11 +605,13 @@ define([
                 if (this.collection) {
                     // Iterate over the passed collection and create a view for each item.
                     this.collection.each(function (item) {
+						var cls = app.views.base || Backbone.View;
                         if ((name = item.constructor.prototype.name) && (name in app.views)) {
-                            this.insertView(new app.views[name]({
-                                model: item
-                            }));
+							cls = app.views[name];
                         }
+						this.insertView(new cls({
+							model: item
+						});
                     }, this);
                 }
             },
@@ -633,15 +635,15 @@ define([
             serialize: function () {
                 if (this.model && this.collection) {
                     return {
-                        model: this.model.toJSON(),
-                        collection: this.collection.toJSON()
+                        model: this.model.toJSON ? this.model.toJSON() : this.model,
+                        collection: return this.collection.toJSON ? this.collection.toJSON() : this.collection
                     }
                 }
                 else if (this.collection) {
-                    return this.collection.toJSON();
+                    return this.collection.toJSON ? this.collection.toJSON() : this.collection;
                 }
                 else if (this.model) {
-                    return this.model.toJSON();
+                    return this.model.toJSON ? this.model.toJSON() : this.model
                 }
             },
 
@@ -703,6 +705,39 @@ define([
             }
         });
         
+		/**
+		 * List form
+		 *
+		 * Loops through a collection, creating a <li> for each item
+		 **/
+		app.views.list = app.views.base.extend({
+		
+			tagName: 'ul',
+			
+			/**
+             * Insert all subViews prior to rendering the View.
+             * 
+             * @https://github.com/tbranyen/backbone.layoutmanager#beforerender-function
+             */
+            beforeRender: function () {
+                if (this.collection) {
+					// Iterate over the passed collection and create a view for each item.
+                    this.collection.each(function (item) {
+						var cls = app.views.base || Backbone.View;
+                        if ((name = item.constructor.prototype.name) && (name in app.views)) {
+							cls = app.views[name];
+                        }
+						this.insertView(new cls({
+							tagName: 'li',
+							
+							model: item
+						});
+                    }, this);
+                }
+            }
+		});
+		
+		
         /**
          * View form
          * 

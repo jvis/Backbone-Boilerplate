@@ -60,7 +60,7 @@ define([
             }
         }
     };
-    
+	
     /**
      * Menu view
      */
