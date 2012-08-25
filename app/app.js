@@ -569,20 +569,20 @@ define([
                     if ($.isFunction(this.model)) {
                         this.model = new this.model();
                     }
-                    this.model.on('change', this.render, this);
+                    this.setModel(this.model);
                 }
                 if (this.collection) {
                     if ($.isFunction(this.collection)) {
                         this.collection = new this.collection();
                     }
-                    this.collection.on('reset', this.render, this);
+                    this.setCollection(this.collection);
                 }
                 return this;
             },
 
             setModel: function (model) {
                 this.model = model;
-                if (model) {
+                if (model && this.model.on) {
                     this.model.on('change', this.render, this);
                 }
                 return this;
@@ -590,7 +590,7 @@ define([
 
             setCollection: function (collection) {
                 this.collection = collection;
-                if (collection) {
+                if (collection && this.collection.on) {
                     this.collection.on('reset', this.render, this);
                 }
                 return this;
@@ -605,13 +605,13 @@ define([
                 if (this.collection) {
                     // Iterate over the passed collection and create a view for each item.
                     this.collection.each(function (item) {
-						var cls = app.views.base || Backbone.View;
+                        var cls = app.views.base || Backbone.View;
                         if ((name = item.constructor.prototype.name) && (name in app.views)) {
-							cls = app.views[name];
+                            cls = app.views[name];
                         }
-						this.insertView(new cls({
-							model: item
-						});
+                        this.insertView(new cls({
+                            model: item
+                        }));
                     }, this);
                 }
             },
@@ -620,10 +620,10 @@ define([
              * @see https://github.com/tbranyen/backbone.layoutmanager#cleanup-function
              */
             cleanup: function() {
-                if (this.model) {
+                if (this.model && this.model.off) {
                     this.model.off(null, null, this);
                 }
-                if (this.collection) {
+                if (this.collection && this.collection.off) {
                     this.collection.off(null, null, this);
                 }
                 return this;
@@ -636,7 +636,7 @@ define([
                 if (this.model && this.collection) {
                     return {
                         model: this.model.toJSON ? this.model.toJSON() : this.model,
-                        collection: return this.collection.toJSON ? this.collection.toJSON() : this.collection
+                        collection: this.collection.toJSON ? this.collection.toJSON() : this.collection
                     }
                 }
                 else if (this.collection) {
@@ -705,37 +705,38 @@ define([
             }
         });
         
-		/**
-		 * List form
-		 *
-		 * Loops through a collection, creating a <li> for each item
-		 **/
-		app.views.list = app.views.base.extend({
-		
-			tagName: 'ul',
-			
-			/**
+        /**
+         * List form
+         *
+         * Loops through a collection, creating a <li> for each item
+         **/
+        app.views.list = app.views.base.extend({
+            
+            tagName: 'ul',
+            
+            /**
              * Insert all subViews prior to rendering the View.
              * 
              * @https://github.com/tbranyen/backbone.layoutmanager#beforerender-function
              */
             beforeRender: function () {
+                var self = this;
                 if (this.collection) {
-					// Iterate over the passed collection and create a view for each item.
+                    // Iterate over the passed collection and create a view for each item.
                     this.collection.each(function (item) {
-						var cls = app.views.base || Backbone.View;
+                        var cls = self.itemView || app.views.base || Backbone.View;
                         if ((name = item.constructor.prototype.name) && (name in app.views)) {
-							cls = app.views[name];
+                            cls = app.views[name];
                         }
-						this.insertView(new cls({
-							tagName: 'li',
-							
-							model: item
-						});
+                        this.insertView(new cls({
+                            tagName: 'li',
+                            
+                            model: item
+                        }));
                     }, this);
                 }
             }
-		});
+        });
 		
 		
         /**
