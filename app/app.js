@@ -604,7 +604,7 @@ define([
             beforeRender: function () {
                 if (this.collection) {
                     // Iterate over the passed collection and create a view for each item.
-                    this.collection.each(function (item) {
+                    _.each(this.collection, function (item) {
                         var cls = app.views.base || Backbone.View;
                         if ((name = item.constructor.prototype.name) && (name in app.views)) {
                             cls = app.views[name];
@@ -723,14 +723,14 @@ define([
                 var self = this;
                 if (this.collection) {
                     // Iterate over the passed collection and create a view for each item.
-                    this.collection.each(function (item) {
+                    _.each(this.collection, function (item) {
                         var cls = self.itemView || app.views.base || Backbone.View;
                         if ((name = item.constructor.prototype.name) && (name in app.views)) {
                             cls = app.views[name];
                         }
                         this.insertView(new cls({
                             tagName: 'li',
-                            
+
                             model: item
                         }));
                     }, this);
