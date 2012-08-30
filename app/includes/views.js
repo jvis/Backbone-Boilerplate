@@ -58,14 +58,14 @@ define([
         
         // router before render hook
         routerBeforeRender: function () {
-            console.log('router:beforeRender');
-            console.log(arguments);
+            app.log('router:beforeRender');
+            app.log(arguments);
         },
         
         // router after render hook
         routerAfterRender: function () {
-            console.log('router:afterRender');
-            console.log(arguments);
+            app.log('router:afterRender');
+            app.log(arguments);
         },
         
         /**
