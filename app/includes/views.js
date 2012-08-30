@@ -57,15 +57,15 @@ define([
         },
         
         // router before render hook
-        routerBeforeRender: function () {
+        routerBeforeRender: function ($section, arg) {
             app.log('router:beforeRender');
-            app.log(arguments);
+            app.log(arg);
         },
         
         // router after render hook
-        routerAfterRender: function () {
+        routerAfterRender: function ($section, arg) {
             app.log('router:afterRender');
-            app.log(arguments);
+            app.log(arg);
         },
         
         /**
