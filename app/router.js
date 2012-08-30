@@ -157,8 +157,9 @@ define([
                 ).done(function () {
                     app.layout.$el.removeClass('loading');
                     self.slidePage(view, $section);
-                    self.triggerHook(view, 'afterRender', args); // invoke afterRender hook
-                });
+                }).done(
+                    self.triggerHook(view, 'afterRender', args) // invoke afterRender hook
+                );
             }
             else {
                 view = new cls();
@@ -172,8 +173,9 @@ define([
                 ).done(function () {
                     app.layout.$el.removeClass('loading');
                     self.slidePage(view, $section);
-                    self.triggerHook(view, 'afterRender', args); // invoke afterRender hook
-                });
+                }).done(
+                    self.triggerHook(view, 'afterRender', args) // invoke afterRender hook
+                );
             }
         },
         
