@@ -606,22 +606,31 @@ define([
             beforeRender: function () {
                 if (this.collection) {
                     // Iterate over the passed collection and create a view for each item.
-                    this.collection.each ? this.collection.each(this.add, this) : _.each(this.collection, this.add, this);
+                    var iterator = function (item) {
+                        this.add(item, this.collection, {render: false});
+                    };
+                    this.collection.each ? this.collection.each(iterator, this) : _.each(this.collection, iterator, this);
                 }
             },
             
             /**
              * Add event - triggered when item added to collection
              */
-            add: function (item) {
+            add: function (item, collection, options) {
                 if (item) {
                     var cls = app.views.base || Backbone.View;
                     if (item.constructor && (name = item.constructor.prototype.name) && (name in app.views)) {
                         cls = app.views[name];
                     }
-                    this.insertView(new cls({
+                    var view = new cls({
                         model: item
-                    }));
+                    });
+                    
+                    this.insertView(view);
+
+                    if (!options || options.render !== false) {
+                        view.render();
+                    }
                 }
                 return this;
             },
