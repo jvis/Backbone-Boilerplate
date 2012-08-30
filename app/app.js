@@ -581,6 +581,11 @@ define([
             },
 
             setModel: function (model) {
+                // remove existing events
+                if (this.model && this.model.off) {
+                    this.model.off(null, null, this);
+                }
+                
                 this.model = model;
                 if (model && this.model.on) {
                     this.model.on('change', this.render, this);
@@ -589,11 +594,15 @@ define([
             },
 
             setCollection: function (collection) {
+                // remove existing events
+                if (this.collection && this.collection.off) {
+                    this.collection.off(null, null, this);
+                }
                 this.collection = collection;
                 if (collection && this.collection.on) {
                     this.collection.on('reset', this.render, this);
-                    this.collection.on('add', this.add, this);
-                    this.collection.on('remove', this.remove, this);
+                    this.collection.on('add', this.onCollectionAdd, this);
+                    this.collection.on('remove', this.onCollectionRemove, this);
                 }
                 return this;
             },
@@ -607,7 +616,7 @@ define([
                 if (this.collection) {
                     // Iterate over the passed collection and create a view for each item.
                     var iterator = function (item) {
-                        this.add(item, this.collection, {render: false});
+                        this.onCollectionAdd(item, this.collection, {render: false});
                     };
                     this.collection.each ? this.collection.each(iterator, this) : _.each(this.collection, iterator, this);
                 }
@@ -616,7 +625,7 @@ define([
             /**
              * Add event - triggered when item added to collection
              */
-            add: function (item, collection, options) {
+            onCollectionAdd: function (item, collection, options) {
                 if (item) {
                     var cls = app.views.base || Backbone.View;
                     if (item.constructor && (name = item.constructor.prototype.name) && (name in app.views)) {
@@ -638,7 +647,7 @@ define([
             /**
              * Remove event - triggered when item removed from collection
              */
-            remove: function (item) {
+            onCollectionRemove: function (item) {
                 if (item) {
                     this.getView(function (view) {
                         return view.model === item;
@@ -657,6 +666,7 @@ define([
                 if (this.collection && this.collection.off) {
                     this.collection.off(null, null, this);
                 }
+                app.off(null, null, this);
                 return this;
             },
             
