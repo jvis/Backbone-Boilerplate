@@ -20,6 +20,14 @@ define([
          */
         events: {},
         
+        initialize: function () {
+            this.constructor.__super__.initialize.apply(this, arguments); // call parent initialize
+            
+            // bind router hooks
+            this.on("router:beforeRender", this.routerBeforeRender, this);
+            this.on("router:afterRender", this.routerAfterRender, this);
+        },
+        
         /**
          * Template
          * 
@@ -46,6 +54,18 @@ define([
             return {
                 code: JSON.stringify(app.init, null, '\t')
             }
+        },
+        
+        // router before render hook
+        routerBeforeRender: function () {
+            console.log('router:beforeRender');
+            console.log(arguments);
+        },
+        
+        // router after render hook
+        routerAfterRender: function () {
+            console.log('router:afterRender');
+            console.log(arguments);
         },
         
         /**

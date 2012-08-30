@@ -54,9 +54,11 @@ define([
                     var $this = $(this);
                     if (route = $this.data('route')) {
                         // add route
-                        self.route(route, $this.attr("id"), function (arg) {
+                        self.route(route, $this.attr("id"), function () {
                             // render section
-                            self.renderSection($this, arg);
+                            var args = Array.prototype.slice.call(arguments);
+                            args.unshift($this);
+                            self.renderSection.apply(self, args);
                         });
                     }
                 });
@@ -88,7 +90,11 @@ define([
                 }
             }).done(function () {
                 // initialize tracking
-		self.bind('all', self.trackPageview, self);
+		self.on('all', self.trackPageview, self);
+                
+                // bind application-wide events         
+                app.on('error', self.onError, self);
+                
                 // Trigger the initial route and enable HTML5 History API support
                 Backbone.history.start({
                     pushState: false, 
@@ -108,14 +114,28 @@ define([
         deselectItem: function(event) {
             $(event.target).removeClass('tappable-active');
         },
-
+        
+        /**
+         * Trigger event on view
+         * 
+         * allows for variable-length argument list
+         * 
+         */
+        triggerHook: function (view, hook, args) {
+            args = Array.prototype.slice.call(args);
+            args.unshift("router:" + hook);
+            view.trigger.apply(view, args);
+        },
+        
         /**
          * Route callback: render section
          */
         renderSection: function ($section, arg) {
             var view = $section.data('view'),
             self = this,
-            cls = app.views.base || Backbone.View;
+            cls = app.views.base || Backbone.View; // default view classes
+      
+            var args = arguments; // cache current arguments
             
             if (view) {
                 cls = app.views[view] || cls;
@@ -129,9 +149,15 @@ define([
                 app.layout.$el.addClass('loading');
 
                 // populate view and render (uses deferred object)
-                $.when(view.populate(), this.showView(view, $section)).done(function () {
+                $.when(
+                    this.triggerHook(view, 'beforePopulate', args), // invoke beforePopulate hook
+                    view.populate(), 
+                    this.triggerHook(view, 'beforeRender', args), // invoke beforeRender hook
+                    this.showView(view, $section)
+                ).done(function () {
                     app.layout.$el.removeClass('loading');
                     self.slidePage(view, $section);
+                    self.triggerHook(view, 'afterRender', args); // invoke afterRender hook
                 });
             }
             else {
@@ -140,9 +166,13 @@ define([
                 app.layout.$el.addClass('loading');
 
                 // render view (uses deferred object)
-                $.when(this.showView(view, $section)).done(function () {
+                $.when(
+                    this.triggerHook(view, 'beforeRender', args), // invoke beforeRender hook
+                    this.showView(view, $section)
+                ).done(function () {
                     app.layout.$el.removeClass('loading');
                     self.slidePage(view, $section);
+                    self.triggerHook(view, 'afterRender', args); // invoke afterRender hook
                 });
             }
         },
@@ -215,6 +245,17 @@ define([
                 app.utils.analytics.trackPageview(Backbone.history.getFragment() || "/");
             }
             return this;
+        },
+        
+        // catch application error
+        onError: function (msg) {
+            // render error if available
+            if (msg) {
+                /**
+                 * @todo
+                 *    do something with error
+                 */
+            }
         }
     })
 
