@@ -5,7 +5,7 @@ define([
     'lodash', 
     'icanhaz', //'handlebars', // supports Handlebars.JS templates also
     'plugins/backbone.layoutmanager', 
-    'plugins/backbone.localStorage.min',
+    //'plugins/backbone.localStorage.min',
     'bootstrap'
 ], function ($, Backbone, _, ich) {
     
@@ -40,12 +40,13 @@ define([
                     
                     Backbone.sync = function (method, model, options) { 
                         // if dataType set, override Backbone.sync function with correct datatype
-                        if (self.dataStore && self.dataStore.dataType) {   
-                            $.extend(options, {
+                        if ((!options || (options && !options.dataType)) && 
+                                self.dataStore && self.dataStore.dataType) {   
+                            options = $.extend(options || {}, {
                                 dataType: self.dataStore.dataType
                             });
                         }
-                        
+                        console.log(options);
                         return self.sync(method, model, options);
                     };
                     
