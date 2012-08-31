@@ -46,7 +46,6 @@ define([
                                 dataType: self.dataStore.dataType
                             });
                         }
-                        console.log(options);
                         return self.sync(method, model, options);
                     };
                     
