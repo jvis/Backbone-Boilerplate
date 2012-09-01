@@ -5,7 +5,7 @@ define([
     'lodash', 
     'icanhaz', //'handlebars', // supports Handlebars.JS templates also
     'plugins/backbone.layoutmanager', 
-    'plugins/backbone.localStorage.min',
+    //'plugins/backbone.localStorage.min',
     'bootstrap'
 ], function ($, Backbone, _, ich) {
     
@@ -40,12 +40,12 @@ define([
                     
                     Backbone.sync = function (method, model, options) { 
                         // if dataType set, override Backbone.sync function with correct datatype
-                        if (self.dataStore && self.dataStore.dataType) {   
-                            $.extend(options, {
+                        if ((!options || (options && !options.dataType)) && 
+                                self.dataStore && self.dataStore.dataType) {   
+                            options = $.extend(options || {}, {
                                 dataType: self.dataStore.dataType
                             });
                         }
-                        
                         return self.sync(method, model, options);
                     };
                     
@@ -187,7 +187,16 @@ define([
             // track event
             // @see https://developers.google.com/analytics/devguides/collection/gajs/methods/gaJSApiEventTracking#_gat.GA_EventTracker_._trackEvent
             trackEvent: function (category, action, label, value, noninteraction) {
-                this.initialize().push(['_trackEvent', category, action, label, value, noninteraction]);
+                var event = ['_trackEvent'];
+                if (!(category && action)) {
+                    return this;
+                }
+                event.push(category);
+                event.push(action);
+                if (label) event.push(label);
+                if (!isNaN(value)) event.push(value);
+                if (typeof(noninteraction) === 'boolean') event.push(noninteraction);
+                this.initialize().push(event);
                 return this;
             },
 
@@ -581,6 +590,11 @@ define([
             },
 
             setModel: function (model) {
+                // remove existing events
+                if (this.model && this.model.off) {
+                    this.model.off(null, null, this);
+                }
+                
                 this.model = model;
                 if (model && this.model.on) {
                     this.model.on('change', this.render, this);
@@ -589,9 +603,15 @@ define([
             },
 
             setCollection: function (collection) {
+                // remove existing events
+                if (this.collection && this.collection.off) {
+                    this.collection.off(null, null, this);
+                }
                 this.collection = collection;
                 if (collection && this.collection.on) {
                     this.collection.on('reset', this.render, this);
+                    this.collection.on('add', this.onCollectionAdd, this);
+                    this.collection.on('remove', this.onCollectionRemove, this);
                 }
                 return this;
             },
@@ -604,18 +624,47 @@ define([
             beforeRender: function () {
                 if (this.collection) {
                     // Iterate over the passed collection and create a view for each item.
-                    _.each(this.collection, function (item) {
-                        var cls = app.views.base || Backbone.View;
-                        if ((name = item.constructor.prototype.name) && (name in app.views)) {
-                            cls = app.views[name];
-                        }
-                        this.insertView(new cls({
-                            model: item
-                        }));
-                    }, this);
+                    var iterator = function (item) {
+                        this.onCollectionAdd(item, this.collection, {render: false});
+                    };
+                    this.collection.each ? this.collection.each(iterator, this) : _.each(this.collection, iterator, this);
                 }
             },
+            
+            /**
+             * Add event - triggered when item added to collection
+             */
+            onCollectionAdd: function (item, collection, options) {
+                if (item) {
+                    var cls = app.views.base || Backbone.View;
+                    if (item.constructor && (name = item.constructor.prototype.name) && (name in app.views)) {
+                        cls = app.views[name];
+                    }
+                    var view = new cls({
+                        model: item
+                    });
+                    
+                    this.insertView(view);
 
+                    if (!options || options.render !== false) {
+                        view.render();
+                    }
+                }
+                return this;
+            },
+            
+            /**
+             * Remove event - triggered when item removed from collection
+             */
+            onCollectionRemove: function (item) {
+                if (item) {
+                    this.getView(function (view) {
+                        return view.model === item;
+                    }).remove();
+                }
+                return this;
+            },
+            
             /**
              * @see https://github.com/tbranyen/backbone.layoutmanager#cleanup-function
              */
@@ -626,6 +675,7 @@ define([
                 if (this.collection && this.collection.off) {
                     this.collection.off(null, null, this);
                 }
+                app.off(null, null, this);
                 return this;
             },
             
@@ -722,10 +772,9 @@ define([
             beforeRender: function () {
                 var self = this;
                 if (this.collection) {
-                    // Iterate over the passed collection and create a view for each item.
-                    _.each(this.collection, function (item) {
+                    var iterator = function (item) {
                         var cls = self.itemView || app.views.base || Backbone.View;
-                        if ((name = item.constructor.prototype.name) && (name in app.views)) {
+                        if (item.constructor && (name = item.constructor.prototype.name) && (name in app.views)) {
                             cls = app.views[name];
                         }
                         this.insertView(new cls({
@@ -733,7 +782,9 @@ define([
 
                             model: item
                         }));
-                    }, this);
+                    };
+                    // Iterate over the passed collection and create a view for each item.
+                    this.collection.each ? this.collection.each(iterator, this) : _.each(this.collection, iterator, this);
                 }
             }
         });

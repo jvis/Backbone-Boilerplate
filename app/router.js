@@ -54,9 +54,9 @@ define([
                     var $this = $(this);
                     if (route = $this.data('route')) {
                         // add route
-                        self.route(route, $this.attr("id"), function (arg) {
-                            // render section
-                            self.renderSection($this, arg);
+                        self.route(route, $this.attr("id"), function () {
+                            // check access
+                            self.checkAccess($this, arguments);
                         });
                     }
                 });
@@ -88,7 +88,11 @@ define([
                 }
             }).done(function () {
                 // initialize tracking
-		self.bind('all', self.trackPageview, self);
+		self.on('all', self.trackPageview, self);
+
+                // bind application-wide events         
+                app.on('error', self.onError, self);
+                
                 // Trigger the initial route and enable HTML5 History API support
                 Backbone.history.start({
                     pushState: false, 
@@ -108,14 +112,69 @@ define([
         deselectItem: function(event) {
             $(event.target).removeClass('tappable-active');
         },
-
+        
+        /**
+         * Trigger event on view
+         * 
+         * allows for variable-length argument list
+         * 
+         */
+        triggerHook: function (view, hook, args) {
+            args = Array.prototype.slice.call(args);
+            args.unshift("router:" + hook);
+            view.trigger.apply(view, args);
+        },
+        
+        /**
+         * Route callback: check access
+         * 
+         * if access allowed, render section
+         */
+        checkAccess: function ($section, routeArgs) {
+            var authenticated = $section.data('authenticated'),
+            self = this;
+            
+            // initialize session
+            var session = this.initSession();
+            
+            // prepare arguments
+            var args = Array.prototype.slice.call(routeArgs);
+            args.unshift($section);
+            // if authentication required and session enabled
+            if (typeof(authenticated) === 'boolean' && session) {
+                session.isAuthenticated(function (loggedIn) {
+                    if (loggedIn) {
+                        if (authenticated === true) {
+                            self.renderSection.apply(self, args);
+                        }
+                        else {
+                            self.navigate('user', {trigger: true});
+                        }
+                    }
+                    else {
+                        if (authenticated === true) {
+                            self.navigate('user/login?destination=' + Backbone.history.getFragment(), {trigger: true});
+                        }
+                        else {
+                            self.renderSection.apply(self, args);
+                        }
+                    }
+                });
+            }
+            else {
+                this.renderSection.apply(this, args);
+            }
+        },
+        
         /**
          * Route callback: render section
          */
         renderSection: function ($section, arg) {
             var view = $section.data('view'),
             self = this,
-            cls = app.views.base || Backbone.View;
+            cls = app.views.base || Backbone.View; // default view classes
+      
+            var args = arguments; // cache current arguments
             
             if (view) {
                 cls = app.views[view] || cls;
@@ -129,10 +188,17 @@ define([
                 app.layout.$el.addClass('loading');
 
                 // populate view and render (uses deferred object)
-                $.when(view.populate(), this.showView(view, $section)).done(function () {
+                $.when(
+                    this.triggerHook(view, 'beforePopulate', args), // invoke beforePopulate hook
+                    view.populate(), 
+                    this.triggerHook(view, 'beforeRender', args), // invoke beforeRender hook
+                    this.showView(view, $section)
+                ).done(function () {
                     app.layout.$el.removeClass('loading');
                     self.slidePage(view, $section);
-                });
+                }).done(
+                    self.triggerHook(view, 'afterRender', args) // invoke afterRender hook
+                );
             }
             else {
                 view = new cls();
@@ -140,10 +206,15 @@ define([
                 app.layout.$el.addClass('loading');
 
                 // render view (uses deferred object)
-                $.when(this.showView(view, $section)).done(function () {
+                $.when(
+                    this.triggerHook(view, 'beforeRender', args), // invoke beforeRender hook
+                    this.showView(view, $section)
+                ).done(function () {
                     app.layout.$el.removeClass('loading');
                     self.slidePage(view, $section);
-                });
+                }).done(
+                    self.triggerHook(view, 'afterRender', args) // invoke afterRender hook
+                );
             }
         },
         
@@ -215,6 +286,27 @@ define([
                 app.utils.analytics.trackPageview(Backbone.history.getFragment() || "/");
             }
             return this;
+        },
+        
+        // initialize session
+        initSession: function () {
+            if (!app.session) {
+                if (app.models && app.models.session) {
+                    app.session = new app.models.session();
+                }
+            }
+            return app.session;
+        },
+        
+        // catch application error
+        onError: function (msg) {
+            // render error if available
+            if (msg) {
+                /**
+                 * @todo
+                 *    do something with error
+                 */
+            }
         }
     })
 
