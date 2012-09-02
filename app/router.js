@@ -178,44 +178,31 @@ define([
             
             if (view) {
                 cls = app.views[view] || cls;
-                view = new cls();
-
-                // fetch data and render
-                if (arg && view.model) {
-                    view.model.id = arg; // if ID set in URL, set to model
-                }
-
-                app.layout.$el.addClass('loading');
-
-                // populate view and render (uses deferred object)
-                $.when(
-                    this.triggerHook(view, 'beforePopulate', args), // invoke beforePopulate hook
-                    view.populate(), 
-                    this.triggerHook(view, 'beforeRender', args), // invoke beforeRender hook
-                    this.showView(view, $section)
-                ).done(function () {
-                    app.layout.$el.removeClass('loading');
-                    self.slidePage(view, $section);
-                }).done(
-                    self.triggerHook(view, 'afterRender', args) // invoke afterRender hook
-                );
             }
-            else {
-                view = new cls();
-                
-                app.layout.$el.addClass('loading');
+            
+            view = new cls();
 
-                // render view (uses deferred object)
-                $.when(
-                    this.triggerHook(view, 'beforeRender', args), // invoke beforeRender hook
-                    this.showView(view, $section)
-                ).done(function () {
-                    app.layout.$el.removeClass('loading');
-                    self.slidePage(view, $section);
-                }).done(
-                    self.triggerHook(view, 'afterRender', args) // invoke afterRender hook
-                );
+            // fetch data and render
+            if (arg && view.model) {
+                view.model.id = arg; // if ID set in URL, set to model
             }
+
+            app.layout.$el.addClass('loading');
+
+            // populate view and render (uses deferred object)
+            $.when(
+                this.triggerHook(view, 'beforePopulate', args), // invoke beforePopulate hook
+                view.populate(), 
+                this.triggerHook(view, 'beforeRender', args), // invoke beforeRender hook
+                this.showView(view, $section)
+            ).done(function () {
+                self.triggerHook(view, 'afterRender', args) // invoke afterRender hook
+            }).fail(function () {
+                app.trigger("error", "An error has occurred while loading the page.", view);   
+            }).always(function () {
+                app.layout.$el.removeClass('loading');
+                self.slidePage(view, $section);
+            });
         },
         
         /**
@@ -252,7 +239,6 @@ define([
                 view.$el.addClass('page stage-center');
                 this.pageHistory = [window.location.hash];
             }
-
             // add view to layout
             app.layout.setView('#' + this.contentId, view); 
             return view.render();
@@ -299,13 +285,26 @@ define([
         },
         
         // catch application error
-        onError: function (msg) {
+        onError: function (msg, view) {
             // render error if available
-            if (msg) {
-                /**
-                 * @todo
-                 *    do something with error
-                 */
+            if (typeof(msg) === 'string') {
+                if (view) {
+                    /**
+                     * render error in view
+                     */
+                    if (view.message) {
+                        var afterRender = view.afterRender || function () { };
+                        
+                        view.afterRender = function () {
+                            afterRender.apply(view, arguments);
+                            this.$el.prepend($('<div id="page-error" />').html(this.message(msg, 'error')));
+                        }
+                        
+                        view.render();
+                    }
+                }
+                // log error to console
+                app.log("Error: " + msg);
             }
         }
     })
