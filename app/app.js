@@ -707,7 +707,7 @@ define([
                 if (this.collection && this.collection.fetch) {
                     deferreds.push(this.collection.fetch(opts));
                 }
-                return $.when(deferreds);
+                return $.when.apply($, deferreds);
             },
 
             // Reset view data
