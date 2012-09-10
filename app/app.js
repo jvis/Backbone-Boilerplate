@@ -658,9 +658,12 @@ define([
              */
             onCollectionRemove: function (item) {
                 if (item) {
-                    this.getView(function (view) {
+                    var view = this.getView(function (view) {
                         return view.model === item;
-                    }).remove();
+                    });
+                    if (view) {
+                        view.remove();
+                    }
                 }
                 return this;
             },
@@ -699,7 +702,7 @@ define([
 
             // Populate view with data (fetch from collection / model)
             // @return jQuery.Deferred
-            populate: function (opts) {
+            populate: function (opts, args) {
                 var deferreds = [];
                 if (this.model && this.model.fetch) {
                     deferreds.push(this.model.fetch(opts));
@@ -808,6 +811,11 @@ define([
                 app.views.form.__super__.initialize.apply(this, arguments);
             },
             
+                    
+            afterRender: function () {
+                this.delegateEvents();
+            },
+
             // save form values to model
             commit: function () {
                 if (this.model && this.validate()) {
