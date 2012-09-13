@@ -349,8 +349,7 @@ define([
                 if (views) {
                     $.each(views, function(index, view) {
                         view = $.extend(true, {
-                            name: index,
-                            className: index
+                            name: index
                         }, view, object);
                         
                         // child views
@@ -615,6 +614,39 @@ define([
                 }
                 return this;
             },
+            
+            attributes: function () {
+                var attrs = {};
+                if (this.model && this.model.constructor) {
+                    var name = this.model.constructor.prototype.name;
+                    
+                    if (name) {
+                        attrs['class'] = name;
+                        
+                        if (this.model.collection) {
+                            var index = this.model.collection.indexOf(this.model);
+                            
+                            attrs['class'] += ' ' + name + '-' + index;
+                            
+                            if (index == 0) {
+                                attrs['class'] += ' first';
+                            }
+                            
+                            if (index % 2 == 0) {
+                                attrs['class'] += ' even';
+                            }
+                            else {
+                                attrs['class'] += ' odd';
+                            }
+                        }
+                        
+                        if (this.model.id) {
+                            attrs['id'] = name + '-' + new String(this.model.id).replace(/[^a-z0-9]/g, '');
+                        }
+                    }
+                }
+                return attrs;
+            },
 
             /**
              * Insert all subViews prior to rendering the View.
@@ -639,34 +671,13 @@ define([
              */
             onCollectionAdd: function (item, collection, options) {
                 if (item) {
-                    var cls = app.views.base || Backbone.View, className = null;
+                    var cls = app.views.base || Backbone.View;
                     if (item.constructor && (name = item.constructor.prototype.name) && (name in app.views)) {
                         cls = app.views[name];
-                        className = name;
-                        if (typeof(options.index) !== 'undefined') {
-                            className += ' ' + name + '-' + options.index;
-                            
-                            if (options.index == 0) {
-                                className += ' first';
-                            }
-                            if (options.index == (collection.length - 1)) {
-                                className += ' last';
-                            }
-                            if (options.index % 2 == 0) {
-                                className += ' even';
-                            }
-                            else {
-                                className += ' odd';
-                            }
-                        }
                     }
-                    var viewOpts = {
+                    var view = new cls({
                         model: item
-                    }
-                    if (className) {
-                        viewOpts.className = className;
-                    }
-                    var view = new cls(viewOpts);
+                    });
                     this.insertView(view);
 
                     if (!options || options.render !== false) {
