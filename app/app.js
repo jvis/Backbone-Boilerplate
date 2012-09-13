@@ -624,8 +624,11 @@ define([
             beforeRender: function () {
                 if (this.collection) {
                     // Iterate over the passed collection and create a view for each item.
-                    var iterator = function (item) {
-                        this.onCollectionAdd(item, this.collection, {render: false});
+                    var iterator = function (item, index) {
+                        this.onCollectionAdd(item, this.collection, {
+                            render: false,
+                            index: index
+                        });
                     };
                     this.collection.each ? this.collection.each(iterator, this) : _.each(this.collection, iterator, this);
                 }
@@ -636,14 +639,34 @@ define([
              */
             onCollectionAdd: function (item, collection, options) {
                 if (item) {
-                    var cls = app.views.base || Backbone.View;
+                    var cls = app.views.base || Backbone.View, className = null;
                     if (item.constructor && (name = item.constructor.prototype.name) && (name in app.views)) {
                         cls = app.views[name];
+                        className = name;
+                        if (typeof(options.index) !== 'undefined') {
+                            className += ' ' + name + '-' + options.index;
+                            
+                            if (options.index == 0) {
+                                className += ' first';
+                            }
+                            if (options.index == (collection.length - 1)) {
+                                className += ' last';
+                            }
+                            if (options.index % 2 == 0) {
+                                className += ' even';
+                            }
+                            else {
+                                className += ' odd';
+                            }
+                        }
                     }
-                    var view = new cls({
+                    var viewOpts = {
                         model: item
-                    });
-                    
+                    }
+                    if (className) {
+                        viewOpts.className = className;
+                    }
+                    var view = new cls(viewOpts);
                     this.insertView(view);
 
                     if (!options || options.render !== false) {
