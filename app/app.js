@@ -4,8 +4,8 @@ define([
     'backbone', 
     'lodash', 
     'icanhaz', //'handlebars', // supports Handlebars.JS templates also
-    'plugins/backbone.layoutmanager', 
-    //'plugins/backbone.localStorage.min',
+    'plugins/backbone.layoutmanager', // layoutManager.min is broken, @see https://github.com/tbranyen/backbone.layoutmanager/issues/164
+    'plugins/backbone.localStorage.min',
     'bootstrap'
 ], function ($, Backbone, _, ich) {
     
@@ -13,7 +13,7 @@ define([
      * Application class
      */
     var Application = function (opts) {
-
+        
         var app = {
             init: false,
 
@@ -224,6 +224,13 @@ define([
             
             get: function (name) {
                 if (!this.stores.hasOwnProperty(name)) {
+                    if (!this.init && this.useSession) {
+                        // override localStorage adapter to use sessionStorage
+                        Backbone.LocalStorage.prototype.localStorage = function () {
+                            return sessionStorage || localStorage;
+                        }
+                        this.init = true;
+                    }
                     this.stores[name] = new Backbone.LocalStorage(name);
                 }
                 return this.stores[name];
